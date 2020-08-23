@@ -1,0 +1,32 @@
+<div class="inputs">
+  <div class="main__container">
+    <label class="main__label">{{ step.question }}</label>
+    <input
+      #inputField
+      class="input__main"
+      type="number"
+      name=""
+      id=""
+      min="0"
+      max="5000"
+      autofocus
+      [placeholder]="step.placeholder"
+      [value]="value"
+      (keyup)="onChange($event)"
+    />
+  </div>
+  <div *ngIf="!!step.helperQuestion" class="helper__container">
+    <label class="helper__label">{{ step.helperQuestion }}</label>
+    <input
+      #additionalInputField
+      class="input__helper"
+      type="number"
+      name=""
+      id=""
+      min="0"
+      max="5000"
+      placeholder="6"
+      (keyup)="onChange($event)"
+    />
+  </div>
+</div>

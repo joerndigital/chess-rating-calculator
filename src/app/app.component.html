@@ -1,0 +1,60 @@
+<rating-progressbar
+  [step]="(!!dwzService.result ? 4 : 0) || stepService.currentStep"
+></rating-progressbar>
+<div class="home">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path
+      fill="#ffffff"
+      d="M3,3H11V7.34L16.66,1.69L22.31,7.34L16.66,13H21V21H13V13H16.66L11,7.34V11H3V3M3,13H11V21H3V13Z"
+    />
+  </svg>
+</div>
+<rating-step [step]="stepService.steps[0]" class="step1"></rating-step>
+<rating-step [step]="stepService.steps[1]" class="step2"></rating-step>
+<rating-step [step]="stepService.steps[2]" class="step3"></rating-step>
+<rating-step [step]="stepService.steps[3]" class="step4"></rating-step>
+<div class="step-placeholder">
+  <rating-button [buttonText]="'Speichern'" [size]="'small'"></rating-button>
+</div>
+
+<div *ngIf="stepService.currentStep > 0" class="go-back">
+  <svg
+    (click)="goToPreviousStep()"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1"
+    width="64"
+    height="64"
+    viewBox="0 0 24 24"
+  >
+    <path
+      fill="#bdc3c7"
+      d="M2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12M18,11H10L13.5,7.5L12.08,6.08L6.16,12L12.08,17.92L13.5,16.5L10,13H18V11Z"
+    />
+  </svg>
+</div>
+
+<rating-input
+  *ngIf="stepService.currentStep < 3"
+  [step]="stepService.steps[stepService.currentStep]"
+  [value]="this.dwzService.currentValue"
+  (valueChanged)="onInputChange($event)"
+></rating-input>
+<rating-button
+  *ngIf="stepService.currentStep < 3"
+  [buttonText]="stepService.steps[stepService.currentStep].buttonText"
+  [size]="'big'"
+  (continue)="goToNextStep()"
+></rating-button>
+
+<div
+  *ngIf="stepService.currentStep === 3"
+  class="step__result"
+>{{stepService.steps[stepService.currentStep].result}}</div>

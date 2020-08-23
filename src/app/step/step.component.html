@@ -1,0 +1,4 @@
+<div class="progress" [ngClass]="!!step.result ? 'filled' : 'missing'">
+  <h3>{{(!!step.result ? step.title : step.step)}}</h3>
+  <p>{{(!!step.result ? step.result : step.title)}}</p>
+</div>

@@ -1,0 +1,51 @@
+:host {
+  height: 100%;
+  width: 100%;
+  background-color: #3498db10;
+  box-shadow: 0px -4px 0px 0px #3498db10;
+}
+
+.progress {
+
+    box-sizing: border-box;
+  
+    height: 100%;
+    width: 100%;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding-left: 8px;
+  
+    h3 {
+      margin: 0;
+      color: #54a4da;
+      font-size: 16px;
+    }
+  
+    p {
+      margin: 0;
+      font-size: 16px;
+      font-family: IBMPlexSansLight;
+      color: #ecf0f1;
+  
+    }
+  }
+  
+  .filled {
+    position: relative;
+    background-color: #3498db10;
+  }
+  
+  .missing {
+    h3 {
+      margin: 0;
+      color: #ecf0f1;
+    }
+  
+    p {
+      margin: 0;
+      color: #bdc3c7;
+    }
+  }

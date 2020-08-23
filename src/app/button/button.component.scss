@@ -1,0 +1,35 @@
+:host {
+  grid-row-start: 3;
+  grid-row-end: 3;
+
+  grid-column-start: 8;
+  grid-column-end: 11;
+}
+
+.step {
+  margin-left: 8px;
+}
+
+button {
+  border: none;
+  background-color: #2980b9;
+  color: #ecf0f1;
+  outline: none;
+
+  font-size: 16px;
+
+  box-sizing: border-box;
+
+  border-radius: 4px;
+}
+
+.button {
+  &--big {
+    height: 128px;
+    width: 100%;
+  }
+
+  &--small {
+    height: 48px;
+  }
+}
