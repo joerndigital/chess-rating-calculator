@@ -1,11 +1,11 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { BrowserModule } from "@angular/platform-browser";
+import { NgModule } from "@angular/core";
 
-import { AppComponent } from './app.component';
-import { InputComponent } from './input-field/input-field.component';
-import { InputButtonComponent } from './button/button.component';
-import { StepComponent } from './step/step.component';
-import { ProgressbarComponent } from './progressbar/progressbar.component';
+import { AppComponent } from "./app.component";
+import { InputComponent } from "./components/input-field/input-field.component";
+import { InputButtonComponent } from "./components/button/button.component";
+import { StepComponent } from "./components/step/step.component";
+import { ProgressbarComponent } from "./components/progressbar/progressbar.component";
 
 @NgModule({
   declarations: [
@@ -13,12 +13,10 @@ import { ProgressbarComponent } from './progressbar/progressbar.component';
     InputComponent,
     InputButtonComponent,
     StepComponent,
-    ProgressbarComponent
+    ProgressbarComponent,
   ],
-  imports: [
-    BrowserModule
-  ],
+  imports: [BrowserModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

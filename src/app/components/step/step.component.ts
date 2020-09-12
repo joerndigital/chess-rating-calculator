@@ -1,4 +1,5 @@
 import { Component, Input } from "@angular/core";
+import { Step } from "src/app/service/step.service";
 
 @Component({
   selector: "rating-step",
@@ -6,5 +7,5 @@ import { Component, Input } from "@angular/core";
   styleUrls: ["./step.component.scss"],
 })
 export class StepComponent {
-  @Input() step!: any;
+  @Input() step!: Step;
 }

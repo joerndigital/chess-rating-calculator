@@ -1,21 +1,15 @@
-:host {
-  grid-row-start: 3;
-  grid-row-end: 3;
-
-  grid-column-start: 2;
-  grid-column-end: 8;
-}
-
 .inputs {
   position: relative;
   display: flex;
   flex-direction: row;
   gap: 8px;
+  justify-content: center;
 }
 
 .main__container {
   position: relative;
   width: 100%;
+  // max-width: 360px;
 }
 
 .helper__container {
@@ -46,7 +40,7 @@
 .input__main,
 .input__helper {
   border: none;
-  background-color: #ecf0f1;
+  background-color: #eff2f6;
   height: 128px;
   line-height: 128px;
 

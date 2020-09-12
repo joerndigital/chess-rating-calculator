@@ -7,6 +7,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
 } from "@angular/core";
+import { Step } from 'src/app/service/step.service';
 
 @Component({
   selector: "rating-input",
@@ -16,10 +17,11 @@ import {
 })
 export class InputComponent implements AfterViewInit {
 
-  @Input() step: any;
+  @Input() step: Step;
 
   @Input() value: number | string;
-  @Output() valueChanged: EventEmitter<number> = new EventEmitter<number>(undefined);
+  @Input() helperValue: number | string;
+  @Output() valueChanged: EventEmitter<{[key: string]: number}> = new EventEmitter<{[key: string]: number}>(undefined);
 
   @ViewChild("inputField", { static: false }) inputRef;
 
@@ -28,9 +30,9 @@ export class InputComponent implements AfterViewInit {
 
   }
 
-  onChange(change) {
-    if (!!this.inputRef.nativeElement) {
-      this.valueChanged.emit(this.inputRef.nativeElement.value);
+  onChange(key, value) {
+    if (!!this.inputRef.nativeElement && (!!value || value === 0)) {
+      this.valueChanged.emit({key, value: Number(value)});
     }
   }
 }

@@ -1,26 +1,30 @@
-import { Component, HostListener } from "@angular/core";
+import {
+  Component,
+  HostListener,
+  ChangeDetectionStrategy,
+} from "@angular/core";
 import { DwzService } from "./service/dwz.service";
-import { StepService } from "./service/step.service";
+import { StepService, Step } from "./service/step.service";
+import { StepInterface } from "./interfaces/step.interface";
 
 @Component({
   selector: "rating-root",
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.scss"],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  title = "chess-rating-calculator";
+  title = "DWZ Rechner";
 
   @HostListener("window:keyup", ["$event"])
   keyEvent(event: KeyboardEvent) {
-    console.log(event);
-
     // enter
     if (event.key === "Enter") {
       this.goToNextStep();
     }
 
     // backspace
-    if (event.key === "Backspace") {
+    if (event.key === " ") {
       this.goToPreviousStep();
     }
   }
@@ -28,46 +32,112 @@ export class AppComponent {
   constructor(public dwzService: DwzService, public stepService: StepService) {}
 
   goToNextStep() {
-    // rename to gotToNextStep
-    this.stepService.steps[this.stepService.currentStep].result =
-      this.dwzService.currentValue ||
-      this.stepService.steps[this.stepService.currentStep].placeholder;
+    if (this.stepService.currentStep.id < 3) {
+      switch (this.stepService.currentStep.key) {
+        case "currentDwz":
+          this.dwzService.currentDwz = Number(
+            this.stepService.currentStep.result
+          );
+          this.dwzService.numberOfDwzEvaluations = Number(
+            this.stepService.currentStep.helper.result
+          );
 
-    if (this.stepService.currentStep === 0) {
-      this.dwzService.currentDwz = Number(this.dwzService.currentValue);
-      this.dwzService.numberOfDwzEvaluations = 6;
+          console.log(this.stepService.currentStep.result);
+
+          break;
+
+        case "yearOfBirth":
+          this.dwzService.yearOfBirth = Number(
+            this.stepService.currentStep.result
+          );
+          break;
+
+        case "currentDwzOfOpponent":
+          this.stepService.currentStep.helper.result =
+            !!this.stepService.currentStep.helper.result ||
+            this.stepService.currentStep.helper.result === 0
+              ? this.stepService.currentStep.helper.result
+              : this.stepService.currentStep.helper.placeholder;
+
+          console.log(this.stepService.currentStep.helper.result);
+
+          if (!!this.stepService.currentStep.result) {
+            this.dwzService.addOpponent({
+              currentDwz: Number(this.stepService.currentStep.result),
+              gameResult: Number(this.stepService.currentStep.helper.result),
+            });
+          }
+
+          this.stepService.steps.newDwz.result = this.dwzService.calculate();
+
+          break;
+
+        default:
+          break;
+      }
+
+      const id = this.stepService.currentStep.id;
+      const newId = id + 1;
+
+      this.stepService.currentStep = Object.values(this.stepService.steps).find(
+        (step) => step.id === newId
+      );
+
+      // this.stepService.currentStep -= 1; // auslagern: Ist Aufgabe des stepService
     }
-
-    if (this.stepService.currentStep === 1) {
-      this.dwzService.yearOfBirth = Number(this.dwzService.currentValue);
-    }
-
-    if (this.stepService.currentStep === 2) {
-      this.dwzService.addOpponent({
-        currentDwz: Number(this.dwzService.currentValue),
-        gameResult: 1,
-      });
-      this.stepService.steps[3].result = this.dwzService.calculate();
-    }
-
-    this.dwzService.currentValue = null;
-
-    if (this.stepService.currentStep < 3) {
-      this.stepService.currentStep++;
-      console.log(this.stepService.currentStep);
-    } else if (this.stepService.currentStep === 3) {
-    }
-
-    console.log(this.dwzService);
   }
 
-  onInputChange(input) {
-    this.dwzService.currentValue = input; // auslagern: Ist Aufgabe des dwzService
+  onInputChange({ key, value }) {
+    let step: Step = Object.values(this.stepService.steps).find(
+      (_step) => _step.key === key
+    );
+
+    if (!!step) {
+      step.result = Number(value);
+      return;
+    }
+
+    step = Object.values(this.stepService.steps).find(
+      (_step) => _step.helper.key === key
+    );
+
+    if (!!step) {
+      step.helper.result = Number(value);
+      return;
+    }
+
+    // auslagern: Ist Aufgabe des dwzService
   }
 
   goToPreviousStep() {
-    if (this.stepService.currentStep > 0) {
-      this.stepService.currentStep -= 1; // auslagern: Ist Aufgabe des stepService
+    if (this.stepService.currentStep.id > 0) {
+      const id = this.stepService.currentStep.id;
+      const newId = id - 1;
+
+      this.stepService.currentStep = Object.values(this.stepService.steps).find(
+        (step) => step.id === newId
+      );
+
+      // this.stepService.currentStep -= 1; // auslagern: Ist Aufgabe des stepService
     }
+  }
+
+  onAction() {
+    if (!!this.stepService.currentStep.result) {
+      this.dwzService.addOpponent({
+        currentDwz: Number(this.stepService.currentStep.result),
+        gameResult: Number(this.stepService.currentStep.helper.result || 1),
+      });
+
+      this.stepService.currentStep.result = undefined;
+      this.stepService.currentStep.helper.result = undefined;
+    }
+
+    console.log(this.stepService.currentStep.helper);
+  }
+
+  onDelete(index: number) {
+    console.log('DELETE');
+    this.dwzService.deleteOpponent(index);
   }
 }

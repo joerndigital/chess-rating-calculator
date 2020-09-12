@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { roundTo } from "../utils/utils";
+import { roundTo } from "../utils/math.utils";
 
 @Injectable({
   providedIn: "root",
@@ -9,7 +9,6 @@ export class DwzService {
   public change$ = new BehaviorSubject(0); // rename
 
   public result; // rename
-  public currentValue: number; // rename
 
   private _currentDwz: number;
   private _numberOfDwzEvaluations: number;
@@ -19,24 +18,16 @@ export class DwzService {
     currentDwz: number;
     achievedPoints: number;
     expectedPoints: number;
+    newDwz: number;
+    change: number;
   }[] = [];
 
-  constructor() {
-    console.log("PERFORMANCE", this.calculatePerformance(2198, 6.5, 6.548, 7));
-    /* const expected = this.calculateExpectedPoints(1500, 1700);
-    const dev = this.calculateDevelopmentCoefficient(
-      1500,
-      2000,
-      expected,
-      1,
-      6
-    );
-    const newDWZ = this.calculateNewDWZ(1500, dev, 1, 1, expected);
-    console.log(newDWZ);*/
-  }
+  private _averageDwz: number;
+
+  constructor() {}
 
   calculate(): number {
-    const numberOfGames = this.opponents.length;
+    const numberOfGames = this.opponents.length || 1;
 
     const expectedPoints = this.opponents.reduce(
       (_expectedPoints, opponent) => opponent.expectedPoints + _expectedPoints,
@@ -49,10 +40,10 @@ export class DwzService {
 
     const developmentCoefficient = this.calculateDevelopmentCoefficient(
       this.currentDwz,
-      this.yearOfBirth,
+      this.yearOfBirth || 1964,
       expectedPoints,
       achievedPoints,
-      this.numberOfDwzEvaluations
+      this.numberOfDwzEvaluations || 6
     ); // TODO Parameter auslagern
 
     const newDwz = this.calculateNewDWZ(
@@ -121,7 +112,6 @@ export class DwzService {
 
     const basicValue = (currentDwz / 1000) ** 4 + ageFactor;
 
-    console.log(accelerationFactor, basicValue, additionalBrake);
     let developmentCoefficient =
       accelerationFactor * basicValue + additionalBrake;
 
@@ -137,7 +127,6 @@ export class DwzService {
       developmentCoefficient = Math.min(developmentCoefficient, 150);
     }
 
-    console.log(developmentCoefficient);
     developmentCoefficient = Math.round(developmentCoefficient);
 
     return developmentCoefficient;
@@ -157,11 +146,43 @@ export class DwzService {
       currentDwz
     );
 
+    const developmentCoefficient = this.calculateDevelopmentCoefficient(
+      this.currentDwz,
+      this.yearOfBirth || 1964,
+      expectedPoints,
+      gameResult || 1,
+      this.numberOfDwzEvaluations || 6
+    ); // TODO Parameter auslagern
+
+    const newDwz = this.calculateNewDWZ(
+      this.currentDwz,
+      developmentCoefficient,
+      1,
+      gameResult,
+      expectedPoints
+    );
+
     this.opponents.push({
       currentDwz,
       achievedPoints: gameResult,
       expectedPoints,
+      newDwz,
+      change: roundTo(newDwz - this.currentDwz, 2),
     });
+
+    this.calculateAverageDwz();
+  }
+
+  public deleteOpponent(index: number) {
+    this.opponents.splice(index, 1);
+  }
+
+  public calculateAverageDwz() {
+    this.averageDwz = this.opponents.reduce(
+      (average, opponent) =>
+        average + opponent.currentDwz / this.opponents.length,
+      0
+    );
   }
 
   public set currentDwz(__currentDwz: number) {
@@ -190,5 +211,13 @@ export class DwzService {
 
   public get opponents() {
     return this._opponents;
+  }
+
+  public set averageDwz(averageDwz: number) {
+    this._averageDwz = averageDwz;
+  }
+
+  public get averageDwz() {
+    return this._averageDwz;
   }
 }

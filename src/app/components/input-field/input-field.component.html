@@ -11,12 +11,12 @@
       max="5000"
       autofocus
       [placeholder]="step.placeholder"
-      [value]="value"
-      (keyup)="onChange($event)"
+      [value]="value || ''"
+      (keyup)="onChange(step.key, $event.srcElement.value)"
     />
   </div>
-  <div *ngIf="!!step.helperQuestion" class="helper__container">
-    <label class="helper__label">{{ step.helperQuestion }}</label>
+  <div *ngIf="!!step?.helper.question" class="helper__container">
+    <label class="helper__label">{{ step.helper.question }}</label>
     <input
       #additionalInputField
       class="input__helper"
@@ -25,8 +25,9 @@
       id=""
       min="0"
       max="5000"
-      placeholder="6"
-      (keyup)="onChange($event)"
+      [placeholder]="step.helper.placeholder"
+      [value]="helperValue || ''"
+      (keyup)="onChange(step.helper.key, $event.srcElement.value)"
     />
   </div>
 </div>
