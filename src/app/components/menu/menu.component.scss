@@ -1,0 +1,144 @@
+:host {
+  display: grid;
+  grid-column-start: 1;
+  grid-column-end: 14;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  height: 100%;
+}
+
+.home {
+  grid-column-start: 1;
+  grid-column-end: 2;
+
+  align-self: center;
+  justify-self: center;
+
+  background-color: #2980b9;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  box-shadow: 0px -4px 0px 0px #2980b9;
+
+  padding: 4px 0;
+
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    grid-column-start: 1;
+    grid-column-end: 3;
+  }
+}
+
+.step1 {
+  grid-column-start: 3;
+  grid-column-end: 5;
+  grid-row-start: 2;
+
+  @media (max-width: 480px) {
+    grid-column-start: 4;
+    grid-column-end: 10;
+  }
+}
+
+.step2 {
+  grid-column-start: 5;
+  grid-column-end: 7;
+  grid-row-start: 2;
+
+  @media (max-width: 480px) {
+    grid-column-start: 4;
+    grid-column-end: 10;
+  }
+}
+
+.step3 {
+  grid-column-start: 7;
+  grid-column-end: 9;
+  grid-row-start: 2;
+
+  @media (max-width: 480px) {
+    grid-column-start: 4;
+    grid-column-end: 10;
+  }
+}
+
+.step4 {
+  grid-column-start: 9;
+  grid-column-end: 11;
+  grid-row-start: 2;
+
+  @media (max-width: 480px) {
+    grid-column-start: 4;
+    grid-column-end: 10;
+  }
+}
+
+.step-placeholder-1 {
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-row-start: 2;
+
+  width: 100%;
+  height: 100%;
+  background-color: #3498db10;
+  box-shadow: 0px -4px 0px 0px #3498db10;
+
+  padding: 4px 0;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    grid-column-start: 3;
+    grid-column-end: 3;
+  }
+}
+
+.step-placeholder-2 {
+  grid-column-start: 11;
+  grid-column-end: 11;
+  grid-row-start: 2;
+
+  width: 100%;
+  height: 100%;
+  background-color: #3498db10;
+  box-shadow: 0px -4px 0px 0px #3498db10;
+
+  padding: 4px 0;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    grid-column-start: 10;
+    grid-column-end: 12;
+  }
+}
+
+.step-placeholder-3 {
+  grid-column-start: 12;
+  grid-column-end: end;
+
+  height: 100%;
+  width: 100%;
+  background-color: #3498db10;
+  box-shadow: 0px -4px 0px 0px #3498db10;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+rating-step {
+  cursor: pointer;
+  padding: 4px 0;
+  box-sizing: border-box;
+}
+
+
+@media (orientation: landscape) and (max-height: 359px) {
+  .step1, .step2 , .step3, .step4, .step-placeholder-1, .step-placeholder-2, .step-placeholder-3, rating-step {
+    display: none;
+  }
+}
