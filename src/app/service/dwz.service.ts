@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { roundTo } from "../utils/math.utils";
+import { StepService } from "./step.service";
 
 @Injectable({
   providedIn: "root",
@@ -24,7 +25,7 @@ export class DwzService {
 
   private _averageDwz: number;
 
-  constructor() {}
+  constructor(private stepService: StepService) {}
 
   calculate(): number {
     const numberOfGames = this.opponents.length || 1;
@@ -99,14 +100,11 @@ export class DwzService {
 
     let accelerationFactor = 1;
     if (achievedPoints > expectedPoints && ageFactor === 5) {
-      // not srp in function
       accelerationFactor = Math.min(Math.max(0.5, currentDwz / 2000), 1);
     }
 
     let additionalBrake = 0;
     if (achievedPoints < expectedPoints && currentDwz < 1300) {
-      // not srp in function
-      console.log("BREMSE");
       additionalBrake = Math.E ** ((1300 - currentDwz) / 150) - 1;
     }
 
@@ -116,7 +114,6 @@ export class DwzService {
       accelerationFactor * basicValue + additionalBrake;
 
     if (developmentCoefficient < 5) {
-      // als Funktion auslagern
       developmentCoefficient = 5;
     } else if (additionalBrake === 0) {
       developmentCoefficient = Math.min(
@@ -131,8 +128,6 @@ export class DwzService {
 
     return developmentCoefficient;
   }
-
-  calculateAgeFactor() {}
 
   addOpponent({
     currentDwz,
@@ -152,7 +147,7 @@ export class DwzService {
       expectedPoints,
       gameResult || 1,
       this.numberOfDwzEvaluations || 6
-    ); // TODO Parameter auslagern
+    );
 
     const newDwz = this.calculateNewDWZ(
       this.currentDwz,
@@ -175,13 +170,28 @@ export class DwzService {
 
   public deleteOpponent(index: number) {
     this.opponents.splice(index, 1);
+    this.calculateAverageDwz();
+
+    if (this.opponents.length === 0) {
+      this.stepService.steps.newDwz.result = undefined;
+      this.stepService.currentStep = this.stepService.steps.currentDwzOfOpponent;
+      this.stepService.currentStep.reset();
+      return;
+    }
+
+    if (!!this.stepService.steps.newDwz.result) {
+      this.stepService.steps.newDwz.result = this.calculate();
+    }
   }
 
   public calculateAverageDwz() {
-    this.averageDwz = this.opponents.reduce(
-      (average, opponent) =>
-        average + opponent.currentDwz / this.opponents.length,
-      0
+    this.averageDwz = roundTo(
+      this.opponents.reduce(
+        (average, opponent) =>
+          average + opponent.currentDwz / this.opponents.length,
+        0
+      ),
+      2
     );
   }
 
