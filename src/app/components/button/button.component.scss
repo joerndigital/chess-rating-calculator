@@ -43,18 +43,18 @@ button {
 }
 
 .hint:before {
- 	// layout
-   content: '';
-   position: absolute;
-   width: 0;
-   height: 0;
-   bottom: 99%;
-   left: 1.25em; // offset should move with padding of parent
-   border: .75rem solid transparent;
-   border-top: none;
- 
-   // looks
-   border-bottom-color: #fff;
+  // layout
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  bottom: 99%;
+  left: 1.25em; // offset should move with padding of parent
+  border: 0.75rem solid transparent;
+  border-top: none;
+
+  // looks
+  border-bottom-color: #fff;
 }
 
 .button {
@@ -89,4 +89,11 @@ button {
     border-radius: 4px;
     color: #2980b9;
   }
+}
+
+.close {
+  width: 32px;
+  height: 32px;
+  align-self: flex-start;
+  margin-top: -4px;
 }

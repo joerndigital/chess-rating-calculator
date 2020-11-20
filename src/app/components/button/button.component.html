@@ -15,8 +15,8 @@
   >
     {{ step.buttonText }}
     <ng-content></ng-content>
-    <div *ngIf="showHint" class="hint">
-      <div style="display: flex; align-items: center;">
+    <div *ngIf="showHint" class="hint" [@showHint]>
+      <div style="display: flex; align-items: center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
