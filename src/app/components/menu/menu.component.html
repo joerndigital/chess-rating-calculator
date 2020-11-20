@@ -1,5 +1,8 @@
 <rating-progressbar
-  [step]="currentStep.id + (!averageDwz ? +!!currentStep.result: +!!averageDwz)"
+  [step]="
+    currentStep.id +
+    (!averageDwz ? (!!currentStep.result ? 1 : 0) : !!averageDwz ? 1 : 0)
+  "
 ></rating-progressbar>
 
 <div class="home">
@@ -20,7 +23,7 @@
 <div class="step-placeholder-1"></div>
 
 <rating-step
-  *ngFor="let step of steps | slice:sliceMobileStart:sliceMobileEnd"
+  *ngFor="let step of steps | slice: sliceMobileStart:sliceMobileEnd"
   [id]="step.id"
   [title]="step.title"
   [result]="step.id !== 2 ? step.result : averageDwz"

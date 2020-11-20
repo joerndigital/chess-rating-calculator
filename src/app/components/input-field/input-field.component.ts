@@ -28,7 +28,7 @@ export class InputComponent implements OnChanges, AfterViewInit {
   public showDropdown = false;
   public dropdownClicked = false;
 
-  @ViewChild("inputField", { static: false }) inputRef;
+  @ViewChild("inputField") inputRef;
 
   ngOnChanges(change: SimpleChanges) {
     this.focusInput(change);
