@@ -5,29 +5,60 @@
       #inputField
       class="input__main"
       type="number"
-      name=""
-      id=""
-      min="0"
-      max="5000"
       autofocus
       [placeholder]="step.placeholder"
-      [value]="value || ''"
+      [value]="result || ''"
       (keyup)="onChange(step.key, $event.srcElement.value)"
     />
   </div>
-  <div *ngIf="!!step?.helper.question" class="helper__container">
+  <div *ngIf="!!step.helper.question" class="helper__container">
     <label class="helper__label">{{ step.helper.question }}</label>
     <input
+      *ngIf="step.helper.type === 'number'"
       #additionalInputField
       class="input__helper"
       type="number"
-      name=""
-      id=""
-      min="0"
-      max="5000"
       [placeholder]="step.helper.placeholder"
-      [value]="helperValue || ''"
+      [value]="helperResult || ''"
       (keyup)="onChange(step.helper.key, $event.srcElement.value)"
     />
+
+    <div
+      *ngIf="step.helper.type === 'dropdown'"
+      class="dropdown__helper"
+      (click)="showOrHideDropdown()"
+    >
+      <input
+        type="text"
+        class="input__helper"
+        [value]="!!helperResult || helperResult === 0 ? helperResult : ''"
+        [placeholder]="step.helper.placeholder"
+        (keyup)="onChange(step.helper.key, $event.srcElement.value)"
+        pattern="^[01]$|^0\.+5$"
+      />
+      <div *ngIf="showDropdown" class="dropdown">
+        <div
+          class="option"
+          (click)="onChange(step.helper.key, 1)"
+          (touch)="onChange(step.helper.key, 1)"
+        >
+          1
+        </div>
+        <div
+          class="option"
+          (click)="onChange(step.helper.key, 0.5)"
+          (touch)="onChange(step.helper.key, 0.5)"
+        >
+          0.5
+        </div>
+        <div
+          class="option"
+          (click)="onChange(step.helper.key, 0)"
+          (touch)="onChange(step.helper.key, 0)"
+        >
+          0
+        </div>
+      </div>
+    </div>
   </div>
 </div>
