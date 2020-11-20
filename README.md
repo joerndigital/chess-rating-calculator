@@ -1,4 +1,4 @@
 # Todo
 
-Add Imprint
-Add Readme
+- Add Imprint
+- Add Readme
