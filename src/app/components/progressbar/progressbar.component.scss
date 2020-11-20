@@ -1,9 +1,23 @@
 :host {
+    /*grid-row-start: 1;
+    grid-row-end: 1;
+
+    grid-column-start: 1;
+    grid-column-end: 2; */
+
+
+    // margin-right: 0;
+    //transition: margin-right 1s ease;
+
+
+    /*&:hover {
+        margin-right: -200%;
+    }*/
     grid-row-start: 1;
     grid-row-end: 1;
 
     grid-column-start: 1;
-    grid-column-end: 2;
+    grid-column-end: 12;
 }
 
 .progressbar {

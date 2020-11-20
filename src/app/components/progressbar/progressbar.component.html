@@ -1,1 +1,7 @@
-<div #bar class="progressbar"></div>
+<div
+  #bar
+  class="progressbar"
+  [@openClose]="
+    isOpen === 'step0' ? 'step0' : isOpen === 'step1' ? 'step1' : isOpen === 'step2' ? 'step2' : isOpen ==='step3' ? 'step3' : 'step4'
+  "
+></div>
