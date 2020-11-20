@@ -1,46 +1,8 @@
-<rating-progressbar
-  [step]="(!!dwzService.result ? 4 : 0) || stepService.currentStep.id"
-></rating-progressbar>
-<div class="home">
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    version="1.1"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-  >
-    <path
-      fill="#ffffff"
-      d="M3,3H11V7.34L16.66,1.69L22.31,7.34L16.66,13H21V21H13V13H16.66L11,7.34V11H3V3M3,13H11V21H3V13Z"
-    />
-  </svg>
-</div>
-<div class="step-placeholder-1"></div>
-<rating-step [step]="stepService.steps.currentDwz" class="step1"></rating-step>
-<rating-step [step]="stepService.steps.yearOfBirth" class="step2"></rating-step>
-<rating-step
-  [step]="stepService.steps.currentDwzOfOpponent"
-  class="step3"
-></rating-step>
-<rating-step [step]="stepService.steps.newDwz" class="step4"></rating-step>
-<div class="step-placeholder-2"></div>
-<div class="step-placeholder-3">
-  <rating-button [size]="'small'"
-    ><svg
-      xmlns="http://www.w3.org/2000/svg"
-      height="24"
-      viewBox="0 0 24 24"
-      width="24"
-    >
-      <path d="M0 0h24v24H0z" fill="none" />
-      <path
-        fill="#2980b9"
-        d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"
-      />
-    </svg>
-  </rating-button>
-</div>
+<rating-menu
+  [steps]="stepService.steps"
+  [currentStep]="stepService.currentStep"
+  [averageDwz]="dwzService.averageDwz"
+></rating-menu>
 
 <div *ngIf="stepService.currentStep.id > 0" class="go-back">
   <svg
@@ -70,13 +32,15 @@
 <rating-input
   *ngIf="stepService.currentStep.id < 3"
   [step]="stepService.currentStep"
-  [value]="this.stepService.currentStep.result"
-  [helperValue]="this.stepService.currentStep.helper.result"
+  [result]="stepService.currentStep.result"
+  [helperResult]="stepService.currentStep.helper.result"
   (valueChanged)="onInputChange($event)"
 ></rating-input>
 <rating-button
   *ngIf="!!stepService.currentStep && stepService.currentStep.id < 3"
+  [numberOfOpponents]="dwzService.opponents.length"
   [size]="'big'"
+  [showHint]="showErrorHint"
   [stepId]="stepService.currentStep.id"
   [step]="stepService.currentStep"
   (continue)="goToNextStep()"
@@ -87,94 +51,81 @@
   {{ stepService.steps.newDwz.result }}
 </div>
 
-<div class="opponents" *ngIf="dwzService.opponents.length > 0">
-  <div class="opponents__header">
-    <div class="header__index"></div>
-    <div class="header__info">
-      <div class="info__container">Gegner</div>
-      <div class="info__container">Erwartet</div>
-      <div class="info__container">Ergebnis</div>
-      <div class="info__container">Änderung</div>
-    </div>
-    <div class="opponent__action"></div>
-  </div>
-
-  <div
-    *ngFor="let opponent of dwzService.opponents; index as i"
-    class="opponent"
-  >
-    <div class="opponent__index">#{{ i + 1 }}</div>
-    <div class="opponent__info">
-      <div class="info__container">{{ opponent.currentDwz }}</div>
-      <div class="info__container">{{ opponent.expectedPoints }}</div>
-      <div class="info__container">{{ opponent.achievedPoints }}</div>
-      <div class="info__container info__change">
-        <div>
-          <span *ngIf="opponent.change >= 0">+</span>{{ opponent.change }}
-        </div>
-        <div style="display: flex; margin-top: 2px">
-          <svg
-            *ngIf="opponent.change > 1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            version="1.1"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="#27ae60"
-              d="M8.5,18.31L5.69,15.5L12.06,9.12H7.11V5.69H18.31V16.89H14.89V11.94L8.5,18.31Z"
-            />
-          </svg>
-
-          <svg
-            *ngIf="opponent.change >= -1 && opponent.change <= 1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            version="1.1"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="#f1c40f"
-              d="M4,10V14H13L9.5,17.5L11.92,19.92L19.84,12L11.92,4.08L9.5,6.5L13,10H4Z"
-            />
-          </svg>
-
-          <svg
-            *ngIf="opponent.change < -1"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            version="1.1"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill="#c0392b"
-              d="M14.89,12.06V7.11H18.31V18.31H7.11V14.89H12.06L5.69,8.5L8.5,5.69L14.89,12.06Z"
-            />
-          </svg>
-        </div>
+<rating-table></rating-table>
+<div *ngIf="dwzService.opponents.length === 0" class="explanation">
+  <h4>Hotkeys</h4>
+  <div class="hotkeys">
+    <div class="hotkey__container">
+      <div class="hotkey">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          version="1.1"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#2980b9"
+            d="M19,7V11H5.83L9.41,7.41L8,6L2,12L8,18L9.41,16.58L5.83,13H21V7H19Z"
+          />
+        </svg>
       </div>
+      <p>Weiter zum nächsten Schritt</p>
     </div>
-    <div class="opponent__action">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        version="1.1"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        (click)="onDelete(i)"
-      >
-        <path
-          fill="#2980b9"
-          d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"
-        />
-      </svg>
+    <div class="hotkey__container">
+      <div class="hotkey">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          version="1.1"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#2980b9"
+            d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"
+          />
+        </svg>
+      </div>
+      <p>Weiter zum nächsten Schritt</p>
+    </div>
+    <div class="hotkey__container">
+      <div class="hotkey">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          version="1.1"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#2980b9"
+            d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"
+          />
+        </svg>
+      </div>
+      <p>Zurück zum vorherigen Schritt</p>
+    </div>
+    <div class="hotkey__container">
+      <div class="hotkey">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          version="1.1"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path
+            fill="#2980b9"
+            d="M3 15H5V19H19V15H21V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V15Z"
+          />
+        </svg>
+      </div>
+      <p>Weiteren Gegner hinzufügen</p>
     </div>
   </div>
 </div>

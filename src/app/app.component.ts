@@ -5,7 +5,6 @@ import {
 } from "@angular/core";
 import { DwzService } from "./service/dwz.service";
 import { StepService, Step } from "./service/step.service";
-import { StepInterface } from "./interfaces/step.interface";
 
 @Component({
   selector: "rating-root",
@@ -14,24 +13,48 @@ import { StepInterface } from "./interfaces/step.interface";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
-  title = "DWZ Rechner";
+  public showErrorHint = false;
 
   @HostListener("window:keyup", ["$event"])
   keyEvent(event: KeyboardEvent) {
     // enter
-    if (event.key === "Enter") {
+    if (event.key === "Enter" || event.key === "ArrowRight") {
       this.goToNextStep();
+      this.toggleErrorHint();
     }
 
-    // backspace
-    if (event.key === " ") {
+    // next
+    if (event.key === "ArrowLeft") {
       this.goToPreviousStep();
+      this.toggleErrorHint();
+    }
+
+    // space
+    if (event.key === " ") {
+      this.onAction();
+      this.toggleErrorHint();
     }
   }
 
   constructor(public dwzService: DwzService, public stepService: StepService) {}
 
+  private toggleErrorHint(): void {
+    if (!this.stepService.currentStep.isValidStep) {
+      this.showErrorHint = true;
+    } else {
+      this.showErrorHint = false;
+    }
+  }
+
   goToNextStep() {
+    if (
+      !this.stepService.currentStep.isValidStep &&
+      !(this.stepService.currentStep.id === 2 &&
+        this.dwzService.opponents.length > 0)
+    ) {
+      return;
+    }
+
     if (this.stepService.currentStep.id < 3) {
       switch (this.stepService.currentStep.key) {
         case "currentDwz":
@@ -41,8 +64,6 @@ export class AppComponent {
           this.dwzService.numberOfDwzEvaluations = Number(
             this.stepService.currentStep.helper.result
           );
-
-          console.log(this.stepService.currentStep.result);
 
           break;
 
@@ -54,12 +75,9 @@ export class AppComponent {
 
         case "currentDwzOfOpponent":
           this.stepService.currentStep.helper.result =
-            !!this.stepService.currentStep.helper.result ||
-            this.stepService.currentStep.helper.result === 0
+            this.stepService.currentStep.helper.result !== undefined
               ? this.stepService.currentStep.helper.result
               : this.stepService.currentStep.helper.placeholder;
-
-          console.log(this.stepService.currentStep.helper.result);
 
           if (!!this.stepService.currentStep.result) {
             this.dwzService.addOpponent({
@@ -82,8 +100,6 @@ export class AppComponent {
       this.stepService.currentStep = Object.values(this.stepService.steps).find(
         (step) => step.id === newId
       );
-
-      // this.stepService.currentStep -= 1; // auslagern: Ist Aufgabe des stepService
     }
   }
 
@@ -123,21 +139,22 @@ export class AppComponent {
   }
 
   onAction() {
-    if (!!this.stepService.currentStep.result) {
+    if (
+      this.stepService.currentStep.id === 2 &&
+      !!this.stepService.currentStep.result &&
+      this.stepService.currentStep.isValidStep
+    ) {
+      const helperResult = this.stepService.currentStep.helper.result;
+
+      const isValidHelperResult = !!helperResult || helperResult === 0;
+
       this.dwzService.addOpponent({
         currentDwz: Number(this.stepService.currentStep.result),
-        gameResult: Number(this.stepService.currentStep.helper.result || 1),
+        gameResult: Number(isValidHelperResult ? helperResult : 1),
       });
 
       this.stepService.currentStep.result = undefined;
       this.stepService.currentStep.helper.result = undefined;
     }
-
-    console.log(this.stepService.currentStep.helper);
-  }
-
-  onDelete(index: number) {
-    console.log('DELETE');
-    this.dwzService.deleteOpponent(index);
   }
 }
