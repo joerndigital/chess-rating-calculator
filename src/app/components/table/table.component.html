@@ -1,0 +1,93 @@
+<div class="opponents" *ngIf="dwzService.opponents.length > 0">
+  <div class="opponents__header">
+    <div class="header__index"></div>
+    <div class="header__info">
+      <div class="info__container">{{isMobile ? 'Geg.' : 'Gegner'}}</div>
+      <div class="info__container">{{isMobile ? 'Erw.' : 'Erwartet'}}</div>
+      <div class="info__container">{{isMobile ? 'Erg.' : 'Ergebnis'}}</div>
+      <div class="info__container">{{isMobile ? 'Änd.' : 'Änderung'}}</div>
+    </div>
+    <div class="header__action"></div>
+  </div>
+
+  <div class="opponents__body">
+    <div
+      *ngFor="let opponent of dwzService.opponents; index as i"
+      class="opponent"
+    >
+      <div class="opponent__index">#{{ i + 1 }}</div>
+      <div class="opponent__info">
+        <div class="info__container">{{ opponent.currentDwz }}</div>
+        <div class="info__container">{{ opponent.expectedPoints }}</div>
+        <div class="info__container">{{ opponent.achievedPoints }}</div>
+        <div class="info__container info__change">
+          <div>
+            <span *ngIf="opponent.change >= 0">+</span>{{ opponent.change }}
+          </div>
+          <div style="display: flex; margin-top: 2px">
+            <svg
+              *ngIf="opponent.change > 1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              version="1.1"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#27ae60"
+                d="M8.5,18.31L5.69,15.5L12.06,9.12H7.11V5.69H18.31V16.89H14.89V11.94L8.5,18.31Z"
+              />
+            </svg>
+
+            <svg
+              *ngIf="opponent.change >= -1 && opponent.change <= 1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              version="1.1"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#f1c40f"
+                d="M4,10V14H13L9.5,17.5L11.92,19.92L19.84,12L11.92,4.08L9.5,6.5L13,10H4Z"
+              />
+            </svg>
+
+            <svg
+              *ngIf="opponent.change < -1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              version="1.1"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#c0392b"
+                d="M14.89,12.06V7.11H18.31V18.31H7.11V14.89H12.06L5.69,8.5L8.5,5.69L14.89,12.06Z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="opponent__action">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          version="1.1"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          (click)="onDelete(i)"
+        >
+          <path
+            fill="#2980b9"
+            d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
