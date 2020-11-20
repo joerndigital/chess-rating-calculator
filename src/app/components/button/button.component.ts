@@ -1,6 +1,5 @@
 import {
   Component,
-  OnInit,
   EventEmitter,
   Input,
   Output,
@@ -8,58 +7,77 @@ import {
   OnChanges,
 } from "@angular/core";
 import { Step } from "src/app/service/step.service";
-import { tap, debounceTime, filter } from "rxjs/operators";
+import { tap, debounceTime } from "rxjs/operators";
 import { Subscription } from "rxjs";
-import { DwzService } from "src/app/service/dwz.service";
+import { hintAnimation } from "./hint.animation";
 
 @Component({
   selector: "rating-button",
   templateUrl: "./button.component.html",
   styleUrls: ["./button.component.scss"],
+  animations: [hintAnimation],
 })
 export class InputButtonComponent implements OnChanges {
   @Input() stepId: number;
   @Input() step: Step;
-  @Input() size;
+  @Input() size: string;
+  @Input() showHint = false;
+
+  private _numberOfOpponents = 0;
+  get numberOfOpponents(): number {
+    return this._numberOfOpponents;
+  }
+
+  @Input() set numberOfOpponents(n: number) {
+    this._numberOfOpponents = n;
+  }
 
   @Output() continue: EventEmitter<any> = new EventEmitter<any>();
   @Output() action: EventEmitter<any> = new EventEmitter<any>();
 
-  public showHint = false;
   public disabled = true;
 
   private changeSubscription: Subscription;
 
-  constructor(private dwzService: DwzService) {}
-
-  ngOnChanges(change: { stepId: SimpleChange }) {
+  ngOnChanges(change: { stepId: SimpleChange, showHint: SimpleChange }) {
     if (!!change.stepId) {
-      if (this.changeSubscription) {
-        this.changeSubscription.unsubscribe();
-      }
-
-      this.disabled = !this.step.isValidStep;
-      this.showHint =
-        !!this.step.hint && !!this.step.result && !this.step.isValidStep;
-
-      this.changeSubscription = this.step.change$
-        .pipe(
-          debounceTime(100),
-          tap(() => {
-            if (this.step.isValidStep) {
-              this.disabled = false;
-              this.showHint = false;
-            } else {
-              this.disabled = true;
-            }
-          })
-        )
-        .subscribe();
+      this.subscribeToStepChange();
+      this.setDisabled();
+      this.setShowHint();
     }
   }
 
-  onClick() {
-    if (!this.disabled || this.dwzService.opponents.length > 0) {
+  private subscribeToStepChange(): void {
+    if (this.changeSubscription) {
+      this.changeSubscription.unsubscribe();
+    }
+
+    this.changeSubscription = this.step.change$
+      .pipe(
+        debounceTime(100),
+        tap(() => {
+          if (this.step.isValidStep) {
+            this.disabled = false;
+            this.showHint = false;
+          } else {
+            this.disabled = true;
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  private setDisabled(): void {
+    this.disabled = !this.step.isValidStep;
+  }
+
+  private setShowHint(): void {
+    this.showHint =
+      !!this.step.hint && !!this.step.result && !this.step.isValidStep;
+  }
+
+  public onClick(): void {
+    if (!this.disabled || this.numberOfOpponents > 0) {
       this.continue.emit();
       this.showHint = false;
     } else {
@@ -67,7 +85,7 @@ export class InputButtonComponent implements OnChanges {
     }
   }
 
-  onHelperClick() {
+  public onHelperClick(): void {
     this.action.emit();
   }
 }
