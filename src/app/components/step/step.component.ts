@@ -7,5 +7,7 @@ import { Step } from "src/app/service/step.service";
   styleUrls: ["./step.component.scss"],
 })
 export class StepComponent {
-  @Input() step!: Step;
+  @Input() id: number;
+  @Input() title: string;
+  @Input() result: number;
 }
