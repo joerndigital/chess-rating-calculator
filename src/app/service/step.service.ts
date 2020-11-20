@@ -1,5 +1,4 @@
 import { Injectable, EventEmitter } from "@angular/core";
-import { StepInterface } from "../interfaces/step.interface";
 import {
   isDefined,
   isNumber,
@@ -29,7 +28,12 @@ export class StepService {
       {
         validators: { min: 100, max: 4000, includeZero: true },
       },
-      { key: "numberOfDwzEvaluations", placeholder: 6, question: "Index" }
+      {
+        key: "numberOfDwzEvaluations",
+        placeholder: 6,
+        question: "Index",
+        type: "number",
+      }
     ),
     yearOfBirth: new Step(
       {
@@ -72,6 +76,7 @@ export class StepService {
         placeholder: 1,
         question: "Ergebnis",
         buttonText: "Weiteren Gegner hinzufügen",
+        type: "dropdown",
       }
     ),
     newDwz: new Step(
@@ -105,6 +110,7 @@ export class Step {
     question?: string;
     buttonText?: string;
     placeholder?: number;
+    type?: "number" | "dropdown";
   };
 
   public change$: EventEmitter<any> = new EventEmitter();
@@ -132,13 +138,14 @@ export class Step {
     },
     validation: {
       validators?: { min?: number; max?: number; includeZero?: boolean };
-    } = {validators: {}},
+    } = { validators: {} },
     helper: {
       result?: number;
       key?: string;
       question?: string;
       buttonText?: string;
       placeholder?: number;
+      type?: "number" | "dropdown";
     } = {}
   ) {
     this.id = keys.id;
@@ -164,6 +171,13 @@ export class Step {
       isSmallEnough,
     ];
 
-    this.isValidStep = validators.every((validator, index) => validator(this.result, this.validators));
+    this.isValidStep = validators.every((validator, index) =>
+      validator(this.result, this.validators)
+    );
+  }
+
+  public reset() {
+    this.result = undefined;
+    this.helper.result = undefined;
   }
 }
